@@ -9,6 +9,10 @@ router.get('/signup', (req, res) => {
 
 router.post('/signin', (req, res) => {
   res.send('sdad')
-})
+});
+
+router.post('/signup', (req, res) => {
+  res.send('UP')
+});
 
 module.exports = router;
