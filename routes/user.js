@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const { check, validationResult } = require('express-validator/check');
 // const passportConfig = require('../config/passport');
+const { ensureAuthentication } = require('../config/auth');
 
 router.get('/signin', (req, res) => {
   res.render('signin')
@@ -68,5 +69,11 @@ router.post('/signup', (req, res) => {
   });
 
 });
+
+router.get('/signout', ensureAuthentication, (req, res) => {
+  req.logout();
+  req.flash('success', { msg: 'You are logged out.' });
+  res.redirect('/');
+})
 
 module.exports = router;
