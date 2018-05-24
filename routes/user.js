@@ -1,7 +1,9 @@
 const router = require('express').Router();
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const passport = require('passport');
 const { check, validationResult } = require('express-validator/check');
+// const passportConfig = require('../config/passport');
 
 router.get('/signin', (req, res) => {
   res.render('signin')
@@ -10,8 +12,13 @@ router.get('/signup', (req, res) => {
   res.render('signup')
 })
 
-router.post('/signin', (req, res) => {
-  res.send('sdad')
+router.post('/signin', (req, res, next) => {
+  
+  passport.authenticate('local', {
+    successRedirect: '/dashboard',
+    failureRedirect: '/user/signin',
+    failureFlash: true
+  })(req, res, next);
 });
 
 router.post('/signup', (req, res) => {
@@ -29,17 +36,17 @@ router.post('/signup', (req, res) => {
   }
 
   User.findOne({
-    username: req.body.username
+    email: req.body.email
   })
   .then(user => {
     if(user) {
-      req.flash('errors', {msg: `Already a user with username ${req.body.username}`});
+      req.flash('errors', {msg: `Already a user with Email ${req.body.email}`});
       return res.redirect('/user/signin');
     }
 
     const newUser = new User({
       username: req.body.username.toLowerCase(),
-      email: req.body.email,
+      email: req.body.email.toLowerCase(),
       password: req.body.password
     });
 
@@ -48,7 +55,7 @@ router.post('/signup', (req, res) => {
         newUser.password = hash;
         newUser.save()
           .then(user => {
-            req.flash('success', 'Your account has been registered.');
+            req.flash('success', {msg: 'Your account has been registered.'});
             return res.redirect('/user/signin');
           })
           .catch(err => {
