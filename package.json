@@ -12,13 +12,16 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
+    "compression": "^1.7.2",
     "express": "^4.16.3",
     "express-flash": "^0.0.2",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.6",
+    "express-status-monitor": "^1.0.1",
     "express-validator": "^5.2.0",
     "mongoose": "^5.1.1",
     "passport": "^0.4.0",
+    "passport-github": "^1.1.0",
     "passport-local": "^1.0.0"
   }
 }

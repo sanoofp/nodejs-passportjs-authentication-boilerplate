@@ -27,3 +27,7 @@ This is a boilerplate for user signin and signup authentication using
 ```javascript
   npm start
 ```
+
+## Note
+
+Rename _./keys/dbProd.js_ to _./keys/db.js_ and edit the mongodb uri

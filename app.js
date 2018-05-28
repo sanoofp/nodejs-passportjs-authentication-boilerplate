@@ -5,6 +5,8 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const expressValidator = require('express-validator');
+const expressStatusmonitor = require('express-status-monitor');
+const compression = require('compression');
 const flash = require('express-flash');
 
 const app = express();
@@ -23,8 +25,12 @@ app.use(bodyParser.json());
 //express-hanldebars
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
+
+//express helper packages
+app.use(expressStatusmonitor());
 //express-validator
 app.use(expressValidator());
+app.use(compression());
 //Express-session
 app.use(session({
   secret: 'nodepassportsecret',
@@ -33,7 +39,7 @@ app.use(session({
 }));
 app.use(flash());
 //passport
-require('./config/passport')(passport);
+require('./config/passport');
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(function(req, res, next){
