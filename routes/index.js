@@ -10,4 +10,5 @@ router.get('/dashboard', ensureAuthentication, (req, res) => {
   res.render('dashboard');
 });
 
+
 module.exports = router;

@@ -1,11 +1,24 @@
+const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const GithubStrategy = require('passport-github').Strategy;
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const passport = require('passport');
 
 const User = require('../models/User');
+const keys = require('../keys/db');
 
-// module.exports = function(passport){
+
+passport.serializeUser(function (user, done) {
+  return done(null, user.id);
+});
+
+passport.deserializeUser(function (id, done) {
+  User
+    .findById(id, function (err, user) {
+      done(err, user);
+    });
+});
+
 passport.use(new LocalStrategy({
   usernameField: 'email'
 }, function (email, password, done) {
@@ -29,15 +42,30 @@ passport.use(new LocalStrategy({
     });
 }));
 
-passport.serializeUser(function (user, done) {
-  return done(null, user.id);
-});
+passport.use(new GithubStrategy({
+    clientID: keys.github.clientID,
+    clientSecret: keys.github.clientSecret,
+    callbackURL: "/auth/github/callback"
+  }, (accessToken, refreshToken, profile, done) => {
 
-passport.deserializeUser(function (id, done) {
-  User
-    .findById(id, function (err, user) {
-      done(err, user);
-    });
-});
+    User.findOne({
+      githubID: profile.id
+    })
+    .then(existinguser => {
+      if(existinguser) {
+        return done(null, existinguser)
+      }
+      const newUser = new User({
+        username: profile.username,
+        githubID: profile.id,
+        email: profile._json.email
+      });
 
-// }
+      newUser.save()
+        .then(user => done(null, user))
+
+    })
+
+  }
+
+))

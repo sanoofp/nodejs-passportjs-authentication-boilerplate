@@ -13,6 +13,7 @@ const app = express();
 
 const indexRoute = require('./routes/index');
 const userRoute = require('./routes/user');
+const authRoute = require('./routes/auth');
 
 //Mongoose
 const db = require('./keys/db')
@@ -49,6 +50,7 @@ app.use(function(req, res, next){
 //Routes
 app.use('/', indexRoute);
 app.use('/user', userRoute);
+app.use('/auth', authRoute);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log('Server started.'));

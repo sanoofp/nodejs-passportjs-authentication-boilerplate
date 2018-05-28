@@ -10,10 +10,8 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
-  password: {
-    type: String,
-    required: true
-  },
+  password: String,
+  githubID: String,
   date: {
     type: Date,
     default: Date.now
