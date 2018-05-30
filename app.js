@@ -15,6 +15,8 @@ const indexRoute = require('./routes/index');
 const userRoute = require('./routes/user');
 const authRoute = require('./routes/auth');
 
+const getGithubFollowerAndFollowing = require('./config/hbs');
+
 //Mongoose
 const db = require('./keys/db')
 mongoose.connect(db.mongoUri)
@@ -24,7 +26,12 @@ mongoose.connect(db.mongoUri)
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 //express-hanldebars
-app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
+app.engine('handlebars', exphbs({ 
+  helpers: {
+    getFnF: getGithubFollowerAndFollowing
+  },
+  defaultLayout: 'main',
+}));
 app.set('view engine', 'handlebars');
 
 //express helper packages
@@ -35,8 +42,8 @@ app.use(compression());
 //Express-session
 app.use(session({
   secret: 'nodepassportsecret',
-  resave: false,
-  saveUninitialized: false,
+  resave: true,
+  saveUninitialized: true,
 }));
 app.use(flash());
 //passport

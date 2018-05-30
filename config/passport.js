@@ -28,7 +28,7 @@ passport.use(new LocalStrategy({
   })
     .then(user => {
       if (!user) {
-        return done(null, false, {message: `No user found with email ${email}`})
+        return done(null, false, {message: `No user found with email ${email}`});
       }
       bcrypt.compare(password, user.password, (err, isMatch) => {
         if (err) 
