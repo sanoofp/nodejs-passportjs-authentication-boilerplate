@@ -47,7 +47,6 @@ passport.use(new GithubStrategy({
     clientSecret: keys.github.clientSecret,
     callbackURL: "/auth/github/callback"
   }, (accessToken, refreshToken, profile, done) => {
-
     User.findOne({
       githubID: profile.id
     })
@@ -58,7 +57,8 @@ passport.use(new GithubStrategy({
       const newUser = new User({
         username: profile.username,
         githubID: profile.id,
-        email: profile._json.email
+        email: profile._json.email, 
+        profileImage: profile._json.avatar_url
       });
 
       newUser.save()

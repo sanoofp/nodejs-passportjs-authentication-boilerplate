@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const { check, validationResult } = require('express-validator/check');
 // const passportConfig = require('../config/passport');
-const { ensureAuthentication } = require('../config/auth');
+const { ensureAuthentication, generateProfileImage } = require('../config/auth');
 
 router.get('/signin', (req, res) => {
   res.render('signin')
@@ -48,12 +48,15 @@ router.post('/signup', (req, res) => {
     const newUser = new User({
       username: req.body.username.toLowerCase(),
       email: req.body.email.toLowerCase(),
-      password: req.body.password
+      password: req.body.password,
     });
 
     bcrypt.genSalt(10, (err, salt) => {
       bcrypt.hash(newUser.password, salt, (err, hash) => {
+        
         newUser.password = hash;
+        newUser.profileImage = generateProfileImage(newUser.email);
+
         newUser.save()
           .then(user => {
             req.flash('success', {msg: 'Your account has been registered.'});
