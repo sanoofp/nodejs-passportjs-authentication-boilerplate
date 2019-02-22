@@ -7,37 +7,31 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const keys = require('../keys/db');
 
-
-passport.serializeUser(function (user, done) {
-  return done(null, user.id);
-});
-
-passport.deserializeUser(function (id, done) {
-  User
-    .findById(id, function (err, user) {
-      done(err, user);
-    });
-});
-
 passport.use(new LocalStrategy({
   usernameField: 'email'
 }, function (email, password, done) {
-  User
-    .findOne({
+  User.findOne({
     email: email.toLowerCase()
   })
     .then(user => {
       if (!user) {
-        return done(null, false, {message: `No user found with email ${email}`});
+        return done(null, false, { message: `No user found with email ${email}` });
+      }
+      if(!user.password) {
+        // 2nd parameter > user / false
+        return done(null, false, { message: "User is not connected via Email" });
       }
       bcrypt.compare(password, user.password, (err, isMatch) => {
-        if (err) 
+        if (err) {
           throw err;
+        } 
+
         if (isMatch) {
           return done(null, user)
         } else {
           return done(null, false, {message: 'Incorrect password'});
         }
+
       });
     });
 }));
@@ -62,10 +56,20 @@ passport.use(new GithubStrategy({
       });
 
       newUser.save()
-        .then(user => done(null, user))
-
-    })
+        .then(user => done(null, user));
+    });
 
   }
+));
 
-))
+
+passport.serializeUser(function (user, done) {
+  return done(null, user.id);
+});
+
+passport.deserializeUser(function (id, done) {
+  User
+    .findById(id, function (err, user) {
+      done(err, user);
+    });
+});
